@@ -57,7 +57,7 @@ mod AccessControl {
     struct RoleAdminChanged {
         role: felt252,
         previous_admin_role: felt252,
-        new_admin: felt252
+        new_admin_role: felt252
     }
 
     #[external(v0)]
@@ -105,7 +105,7 @@ mod AccessControl {
 
         fn _grant_role(ref self: ContractState, role: felt252, account: ContractAddress) {
             if !AccessControlImpl::has_role(@self, role, account) {
-                let caller = get_caller_address();
+                let caller: ContractAddress = get_caller_address();
                 self.AccessControl_role_member.write((role, account), true);
                 self.emit(RoleGranted { role, account, sender: caller });
             }
@@ -122,7 +122,7 @@ mod AccessControl {
         fn _set_role_admin(ref self: ContractState, role: felt252, admin_role: felt252) {
             let previous_admin_role = AccessControlImpl::get_role_admin(@self, role);
             self.AccessControl_role_admin.write(role, previous_admin_role);
-            self.emit(RoleAdminChanged { role, previous_admin_role, new_admin: admin_role });
+            self.emit(RoleAdminChanged { role, previous_admin_role, new_admin_role: admin_role });
         }
     }
 }
